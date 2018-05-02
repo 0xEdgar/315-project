@@ -1,0 +1,77 @@
+---
+title: "36-315 Homework 11, Spring 2018"
+author: "[Names and Andrew IDs of all members of your Group]"
+date: "Due Wednesday, April 25, 2018 (11:59pm) on Canvas"
+output: 
+  html_document:
+    toc:  true
+    toc_float:  true
+    code_folding:  show
+runtime: shiny
+---
+
+```{r}
+library(tidyverse)
+df = read.csv("undergrad.csv")
+df$adm_rate = as.numeric(as.character(df$adm_rate))
+df
+```
+
+
+
+```{r}
+undergrad_table = df %>% select(., College = college, State = state, 
+                                            `Admission_Rate` = adm_rate, `Average_Total_Cost` = avg_cost, 
+                                            `Average_Tuition` = avg_tuition, `Student Population` = population, 
+                                            `Students_With_Loans` = pct_loan, `Median Debt` = md_debt, 
+                                            `Median_Earnings` = md_earnings_10, `Comp Sci_Majors` = comp_deg,
+                                            `Math_Majors` = math_deg, `Engineering_Majors` = eng_deg)
+```
+
+
+# college cost vs earnings
+
+```{r}
+ggplot(df, aes(x = md_earnings_10, y = avg_cost  )) + geom_point()
+```
+```{r}
+# df$adm_rate_all = as.numeric(df$adm_rate_all)/100
+# df$adm_rate = as.numeric(df$adm_rate)
+df %>% filter(., adm_rate <.5)
+```
+
+```{r}
+shinyApp(
+  
+  ui = fluidPage(
+    inputPanel(
+      sliderInput("acc_adjust", label = "Acceptance Rate:",
+                  min = 0, max = 1, value = .5, step = 0.05),
+      # 
+      # radioButtons("which_variable", label = "Which variable?",
+      #              choices = c("Eruption duration" = "eruptions",
+      #                          "Waiting time between eruptions" = "waiting")),
+      # checkboxInput("add_rug", label = "Add rug plot")
+    ),
+    plotoutput('earnings_plot')
+  ),
+  
+  filtered_scatter = reactive({  #Create reactive element to filter data based on user inputs
+    scatter_data2 = df %>% filter(., adm_rate <= input$acc_adjust)}),
+  # filtered_scatter <- df%>% filter(., adm_rate < input$acc_adjust), 
+  
+  server = function(input, output) {
+    
+    output$earnings_plot <- renderPlot({
+      p2 <- ggplot(filtered_scatter,
+                  aes(x = md_earnings_10 , y =avg_cost ) )+ geom_point()
+      
+      p2
+    })
+  },
+  
+  options = list(height = 600)
+)
+)
+```
+
