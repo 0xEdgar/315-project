@@ -75,3 +75,37 @@ shinyApp(
 )
 ```
 
+```{r}
+## repayment based on percent of stem majors
+df$STEM <- df$eng_deg + df$engtech_deg + df$math_deg + df$sci_deg
+df$repay_rate <- as.numeric(as.character(df$repay_rate))
+
+ggplot(df, aes(x=STEM, y=repay_rate, color=adm_rate)) + 
+  geom_jitter() + 
+  geom_smooth(method = "loess", se = TRUE) + 
+  labs(x="Proportion of Students in STEM Majors",
+       y="Debt Repayment Rate",
+       title="Student Debt Repayment vs STEM Enrollment",
+       color="Admit Rate")
+```
+
+```{r}
+ggplot(df, aes(x=STEM, y=md_earnings_10, color=adm_rate)) + 
+  geom_jitter() + 
+  geom_smooth(method = "loess", se = TRUE) + 
+  labs(x="Proportion of Students in STEM Majors",
+       y="Median Earnings (USD)",
+       title="Student Debt Repayment vs STEM Enrollment",
+       color="Admit Rate")
+```
+
+```{r}
+df$school_type <- as.factor(df$school_type)
+levels(df$school_type) <- c("Public", "Private Non-Profit", "Private For-Profit")
+
+ggplot(df, aes(x = md_debt, col = school_type)) + 
+  geom_density() + 
+  labs(x="Median Debt (USD)", y="Density",
+       color="School Type", title="Median Student Debt Distributions by School Type")
+```
+
