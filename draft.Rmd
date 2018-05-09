@@ -1,4 +1,4 @@
----
+  ---
 title: "36-315 Homework 11, Spring 2018"
 author: "[Names and Andrew IDs of all members of your Group]"
 date: "Due Wednesday, April 25, 2018 (11:59pm) on Canvas"
@@ -14,8 +14,8 @@ runtime: shiny
 library(tidyverse)
 df = read.csv("undergrad.csv")
 df$adm_rate = as.numeric(as.character(df$adm_rate))
-df
 ```
+
 
 
 
@@ -37,41 +37,73 @@ ggplot(df, aes(x = md_earnings_10, y = avg_cost  )) + geom_point()
 ```{r}
 # df$adm_rate_all = as.numeric(df$adm_rate_all)/100
 # df$adm_rate = as.numeric(df$adm_rate)
-df %>% filter(., adm_rate <.5)
+# df %>% filter(., adm_rate <.5)
 ```
 
 ```{r}
+library(plotly)
 shinyApp(
   
   ui = fluidPage(
     inputPanel(
-      sliderInput("acc_adjust", label = "Acceptance Rate:",
-                  min = 0, max = 1, value = .5, step = 0.05),
+       sliderInput("adm_rate", "Filter By Rate of Admissions", #add slider input for user to filter by admission rate
+                                    0, 1, value = c(0, 1), step = .05)
       # 
       # radioButtons("which_variable", label = "Which variable?",
       #              choices = c("Eruption duration" = "eruptions",
       #                          "Waiting time between eruptions" = "waiting")),
       # checkboxInput("add_rug", label = "Add rug plot")
     ),
-    plotoutput('earnings_plot')
+    plotlyOutput('earnings_plot')
+    
+  #   inputPanel(
+  #     selectizeInput(inputId = "school_type", 
+  #                                      label = "Filter By School Type",
+  #                                      choices = c('All','Public', 'Private Non-Profit', 'Private For-Profit'))
+  #   ),
+  #   plotlyOutput('school_type_plot')
   ),
-  
-  filtered_scatter = reactive({  #Create reactive element to filter data based on user inputs
-    scatter_data2 = df %>% filter(., adm_rate <= input$acc_adjust)}),
-  # filtered_scatter <- df%>% filter(., adm_rate < input$acc_adjust), 
+  # 
   
   server = function(input, output) {
+    df = read.csv("undergrad.csv")
+    df$adm_rate = as.numeric(as.character(df$adm_rate))
     
-    output$earnings_plot <- renderPlot({
-      p2 <- ggplot(filtered_scatter,
-                  aes(x = md_earnings_10 , y =avg_cost ) )+ geom_point()
-      
-      p2
+    filtered_scatter = reactive({
+    scatter = subset(df, adm_rate >= input$adm_rate[1] & adm_rate <= input$adm_rate[2])
+      #df %>% filter(., adm_rate <= input$acc_adjust)
+    return (scatter)
     })
+    # 
+    # if (input$school_type == 'All') { #Filter based on selected school type (All, Public, Private, Non-Profit)
+    #   (df)
+    # } else if (input$school_type == 'Public') {
+    #   (df %>% filter(., school_type == "1"))
+    # } else if (input$school_type == 'Private Non-Profit') {
+    #   (df %>%  filter(., school_type == "2"))
+    # } else {
+    #   (df %>%  filter(., school_type == "3"))
+    # }
+    # 
+    
+    output$earnings_plot <- renderPlotly({
+      p2 <- ggplot(filtered_scatter(),
+                  aes(x = md_earnings_10 , y =avg_cost, text = college ) )+ geom_point() +labs(x= "median earnings 10 years after graduation", y = "average yearly cost", title = "10 year earnings vs college cost, filtered by college selectivity")
+      ggplotly(p2)
+    })
+    
+    # output$school_type_plot <- renderPlotly({
+    #   
+    #   p3 <- ggplot(df, aes(x = avg_cost)) + geom_density(alpha = 0.3)
+    #   ggplotly(p3)
+    # })
   },
   
   options = list(height = 600)
 )
-)
+```
+
+```{r}
+undregrad <- read.csv("undergrad.csv")
 ```
 
