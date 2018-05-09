@@ -1,0 +1,31 @@
+---
+title: "project_plots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+undergrad <- read_csv("undergrad.csv")
+undergrad$school_type <- factor(undergrad$school_type)
+undergrad$school_type <- fct_recode(undergrad$school_type, Public = "1", PrivateNonProfit = "2", PrivateForProfit = "3")
+ggplot(undergrad, aes(x = avg_fam_inc, fill = school_type)) + 
+  geom_histogram(binwidth = 10000) + facet_grid(~factor(school_type)) +
+  labs(title = "Average Family Income by School Type",
+       x = "Average Family Income",
+       y = "Number of Schools",
+       fill = "School Type")
+```
+
+
+```{r}
+undergrad$adm_rate = as.numeric(undergrad$adm_rate)
+ggplot(undergrad, aes(x = avg_fam_inc, y = md_earnings_10, color = school_type)) + 
+  geom_point(cex = 0.75) +
+  labs(title = "Earnings vs. Average Family Income",
+       x = "Average Family Income",
+       y = "Earnings",
+       color = "School Type")
+```
