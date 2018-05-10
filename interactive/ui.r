@@ -14,9 +14,8 @@ df = read.csv("undergrad.csv")
 bod_1 <- fluidPage(
     theme = shinytheme("cerulean"),
     titlePanel("Where are colleges located?"),
-    fluidRow(
         inputPanel(sliderInput("adm_rate2", "Filter By Rate of Admissions", # second slider
-                            0, 1, value = c(0, 1), step = .05))),
+                            0, 1, value = c(0, 1), step = .05)),
         # inputPanel(sliderInput("population", "Filter by Population",
         #                     0, max(df$population, na.rm = T),
         #                      value = c(0, max(df$population, na.rm =T)), step = 100))),
@@ -35,7 +34,7 @@ bod_1 <- fluidPage(
 
 bod_2 <- fluidPage(
     titlePanel("Eric's plot #1"),
-	plotlyOutput('eric_plot1', height = "550px"),
+	plotlyOutput('eric_plot1'),
     # selectizeInput(
     #    'e1', 'Choose college', choices = df$college, multiple = FALSE
     #  ),
@@ -75,12 +74,11 @@ ui <- dashboardPage(
       tabItems(
           tabItem(tabName = "introduction",
             h1("Which college is right for me?"),
-            fluidRow(
             box("Choosing a college is often a stressful and confusing process. In this application,
             we analyze the different factors that may contribute to selecting a college
             For example, how much money will you make, vs how much debt will you go through?
             The following dataset was taken from the US department of education
-            ")),
+            "),
 
             fluidRow(
                 box(title = "Data Source", status = 'info',

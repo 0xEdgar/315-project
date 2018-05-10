@@ -61,8 +61,8 @@ function(input, output) {
                       x= "average yearly cost",
                       y = "median earnings 10 years after graduation",
                       color = "School Type",
-                      title = "10 year earnings vs college cost, filtered by college selectivity") +
-                  theme(axis.text.y = element_text(angle = 90, hjust = 1))
+                      title = "10 year earnings vs college cost, filtered by college selectivity")
+                  # theme(axis.text.y = element_text(angle = 90, hjust = 1))
       p2
     })
     #
