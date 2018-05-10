@@ -46,7 +46,6 @@ function(input, output) {
     return (df_sub_acc)
     })
 
-
     output$earnings_plot <- renderPlotly({
       p2 <- ggplot(filtered_scatter(),
                   aes(x = avg_cost , y =md_earnings_10, text = college, color = school_type) )+
@@ -86,7 +85,7 @@ function(input, output) {
         # # scale_color_distiller(palette = "RdPu")
         # ggplotly(plot_2)
         p <- plot_geo(school_type(), lat = ~lat, lon = ~long, text = ~college,
-        size = ~population, color = ~adm_rate, colors = c("#cb181d", "#fee0d2")) %>%
+        size = ~population, mode = "markers", color = ~adm_rate, colors = c("#cb181d", "#fee0d2")) %>%
         layout(geo =g, title = "Colleges in the United States") %>%
         ggplotly(p)
 
