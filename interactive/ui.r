@@ -8,7 +8,7 @@ library(shinythemes)
 library(tidyverse)
 library(plotly)
 shinythemes::themeSelector()
-
+shiny::tags
 df = read.csv("undergrad.csv")
 
 bod_1 <- fluidPage(
@@ -23,51 +23,101 @@ bod_1 <- fluidPage(
                        label = "Filter By School Type",
                        choices = c('All','Public', 'Private Non-Profit', 'Private For-Profit')),
     plotlyOutput('plot2'),
-	titlePanel("Edgar's Plot #1"),
-	inputPanel(sliderInput("adm_rate", "Filter By Rate of Admissions",
-        0, 1, value = c(0, 1), step = .05)),
-	plotlyOutput('earnings_plot')
+    tags$br(),
+    p("We notice some interesting things: The most selective colleges are
+    typically located in the East and West coasts. \nThe most selective public colleges (UC Berkeley and UCLA) are
+    also exclusively located in the West Coast. The most selective private colleges are almost exclusively
+    located in the East Coast"),
+    tags$br(),
+	titlePanel("which colleges are most selective/expensive?"),
+	plotlyOutput('plot_8'),
+    tags$br(),
+    p("
+    There seems to be 3 distinct clusters of tuition rates: one uniformly centered around 20k,
+    one centered around 40k a year that increases slightly with admission rate, and one centered around 60k."),
+    tags$br(),
+    p("Overall, price vs selectivity of colleges tends to be fairly homogenous towards the center,
+    but we notice that the most selective colleges are outliers that all tend to be around the same,
+    extremely expensive price of approximately 60k a year.")
     )
 
 
 
-
 bod_2 <- fluidPage(
-    titlePanel("Eric's plot #1"),
+    titlePanel("Will I earn more from going to a Private School?"),
 	plotlyOutput('eric_plot1'),
+    tags$br(),
+    p("Surpsingly, the median earnings 10 years after graduation is centered around 40k a year for
+    both private and public schools. With for-profit schools, the answer is less clear, as there is
+    much less data.
+    "),
+
     # selectizeInput(
     #    'e1', 'Choose college', choices = df$college, multiple = FALSE
     #  ),
-	titlePanel("Eric's plot 2"),
-	plotlyOutput('eric_plot2'))
+
+    titlePanel("Do graduates of more expensive schools earn more?"),
+    inputPanel(sliderInput("adm_rate", "Filter By Rate of Admissions",
+        0, 1, value = c(0, 1), step = .05)),
+
+    plotlyOutput('earnings_plot', width = 'auto'),
+    tags$br(),
+    p("For schools with acceptance rates above 50%, college cost is not a significant predictor of
+    post-graduate earnings.
+    However, for the most selective schools,
+    graduates of the most expensive schools tend to earn more.
+    The highest earning graduates come from Harvard, MIT, and Stanford, but these three schools also
+    rank among the most expensive, with a tuition of around 60k each.
+    ")
+
+
+    )
 
 bod_3 <- fluidPage(
-	titlePanel("Jai's plot1"),
+	titlePanel("Do colleges that receive more financial aid have better debt repayment rates?"),
 	plotlyOutput('jai_plot1'),
 
-	titlePanel("Jai's plot2"),
-	plotlyOutput('jai_plot2'))
+    tags$br(),
+    p("Unfortunately, the opposite is true: colleges that have a higher percentage of pell grant receivers
+    tend to have lower debt repayment rates."),
+
+	titlePanel("Do public school graduates end up with less debt?"),
+	plotlyOutput('jai_plot2'),
+    tags$br(),
+    p("The median amount of debt from public school graduates is around 22k, whereas it's 26k for
+    public school grads and a whopping 34k for for-profit universities."),
+    tags$br(),
+    p("One interesting thing to note is that the debt distribution of public and private school graduates
+    is unimodal, but for for-profit schools, the distribution is bimodal."))
 
 bod_4 <- fluidPage(
-	titlePanel("Taylor's plot 1"),
+	titlePanel("Do more selective colleges have lower default rates?"),
 	inputPanel(
     	sliderInput("adm_rate_2", "Filter By Rate of Admissions",
             0, 1, value = c(0, 1), step = .05)),
 	plotlyOutput('plot_7'),
 
-	titlePanel("Taylor's plot 2"),
-	plotlyOutput('plot_8')
+    tags$br(),
+    p("Unsurprisingly, for-profit schools have the highest default rates.
+    Without adjusting for acceptance rates, public schools have higher default rates, but this trend reverses
+    itself when taking to account the most selective colleges (<25% acceptance rate)."),
+
+    titlePanel("Is your family's income related to how much you make?"),
+	plotlyOutput('eric_plot2', width = 'auto'),
+    tags$br(),
+    p("Your family's income is a better predictor of your postgraduate earnings than the type of school
+    that you go to")
     )
 
 ui <- dashboardPage(
-  dashboardHeader(),
+  dashboardHeader(title = "Hurky White"),
   dashboardSidebar(
       sidebarMenu(
           menuItem("introduction", tabName = "introduction"),
-          menuItem("part1",tabName= "part1"),
-          menuItem("part2", tabName = "part2"),
-          menuItem("part3", tabName = "part3"),
-          menuItem("part4", tabName = "part4")
+          menuItem("Which college should I choose?",tabName= "part1"),
+          menuItem("How much will I earn?", tabName = "part2"),
+          menuItem("Is college worth it?", tabName = "part3"),
+          menuItem("Is college worth it? (pt 2)", tabName = "part4")
       )
   ),
   dashboardBody(
@@ -84,7 +134,7 @@ ui <- dashboardPage(
                 box(title = "Data Source", status = 'info',
                     "College Scorecard Data (US department of Education)"
                     ),
-                box(title = "Data Source", status = 'info',
+                box(title = "Authors", status = 'info',
                     "Edgar Xi", br(),
                     "Taylor Vigliotti", br(),
                     "Eric Wang", br(),
