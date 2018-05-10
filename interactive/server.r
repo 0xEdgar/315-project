@@ -17,6 +17,7 @@ function(input, output) {
     df$repay_rate <- as.numeric(as.character(df$repay_rate))
     df$default_rate <- as.numeric(as.character(df$default_rate))
     # print(df$population)
+
     filtered_scatter = reactive({
       scatter = subset(df, adm_rate >= input$adm_rate[1] & adm_rate <= input$adm_rate[2])
         #df %>% filter(., adm_rate <= input$acc_adjust)
@@ -28,6 +29,9 @@ function(input, output) {
         #df %>% filter(., adm_rate <= input$acc_adjust)
       return (scatter)
       })
+    # filtered_colleges = reactive({
+    #     colleges = subset(df, college == input$e1)
+    # })
 
 
     school_type = reactive({
@@ -43,12 +47,15 @@ function(input, output) {
     }
     # filter by acceptance rate as well
     df_sub_acc <- subset(df_sub, adm_rate >= input$adm_rate2[1] & adm_rate <= input$adm_rate2[2] )
+
+    #filter by population too
+    # df_sub_acc_pop <- subset(df_sub_acc, population >= input$population[1] & population <= input$population[2])
     return (df_sub_acc)
     })
 
     output$earnings_plot <- renderPlotly({
       p2 <- ggplot(filtered_scatter(),
-                  aes(x = avg_cost , y =md_earnings_10, text = college, color = school_type) )+
+                  aes(x = avg_cost , y =md_earnings_10 ,text = college, color = school_type) )+
                   geom_point(cex = 0.8) +
                   labs(
                       x= "average yearly cost",
@@ -84,10 +91,12 @@ function(input, output) {
         # geom_point(aes(x = long, y = lat, size = population, color = adm_rate), data = school_type())
         # # scale_color_distiller(palette = "RdPu")
         # ggplotly(plot_2)
-        p <- plot_geo(school_type(), lat = ~lat, lon = ~long, text = ~college,
-        size = ~population, mode = "markers", color = ~adm_rate, colors = c("#cb181d", "#fee0d2")) %>%
-        layout(geo =g, title = "Colleges in the United States") %>%
-        ggplotly(p)
+        plot_geo(school_type(), lat = ~lat, lon = ~long, text = ~college,
+        size = ~population, mode = "markers", color = ~adm_rate, colors = c("red", "green"))%>%
+        add_markers(
+            text = ~paste(college, "\npopulation: ",population, "\n acceptance rate: ", adm_rate)
+            , hoverinfo = "text") %>%
+        layout(geo =g, title = "Colleges in the United States")
 
     })
 
@@ -95,18 +104,23 @@ function(input, output) {
     df$school_type <- fct_recode(df$school_type, Public = "1", PrivateNonProfit = "2", PrivateForProfit = "3")
 
     output$eric_plot1 <- renderPlotly({
-      p3 <- ggplot(df, aes(x = avg_fam_inc, fill = school_type)) +
-        geom_histogram(binwidth = 10000) + facet_grid(~factor(school_type)) +
-        labs(title = "Average Family Income by School Type",x = "Average Family Income",
-          y = "Number of Schools", fill = "School Type")
-      ggplotly(p3)
+    df %>% plot_ly(x = ~avg_fam_inc, frame = ~school_type, type = "histogram") %>%
+    animation_opts(1000, transition = .5,easing = 'elastic', redraw = TRUE) %>%
+    animation_slider(currentvalue = list(prefix = "TYPE"))
+      #
+      # p3 <- ggplot(df, aes(x = avg_fam_inc, fill = school_type)) +
+      #   geom_histogram(binwidth = 10000) + facet_grid(~factor(school_type)) +
+      #   labs(title = "Average Family Income by School Type",x = "Average Family Income",
+      #     y = "Number of Schools", fill = "School Type") +
+      #     theme(axis.text.y = element_text(angle = 90, hjust = 1))
+      # ggplotly(p3)
       })
 
     output$eric_plot2 <- renderPlotly({
       p4 <- ggplot(df, aes(x = avg_fam_inc, y = md_earnings_10, text = college, color = school_type)) +
         geom_point(cex = 0.75) +
         labs(title = "Earnings vs. Average Family Income",
-          x = "Average Family Income",
+          x = "\nAverage Family Income",
           y = "Earnings",
           color = "School Type") +
         theme(axis.text.y = element_text(angle = 90, hjust = 1))
@@ -130,7 +144,8 @@ function(input, output) {
       p6 <- ggplot(df, aes(x = md_debt, color = school_type)) +
         geom_density() +
         labs(x="Median Debt (USD)", y="Density",
-             color="School Type", title="Median Student Debt Distributions by School Type")
+             color="School Type", title="Median Student Debt Distributions by School Type") +
+             theme(axis.text.y = element_text(angle = 90))
       ggplotly(p6)
       })
 
