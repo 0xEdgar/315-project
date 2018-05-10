@@ -16,7 +16,7 @@ function(input, output) {
     df$STEM <- df$eng_deg + df$engtech_deg + df$math_deg + df$sci_deg
     df$repay_rate <- as.numeric(as.character(df$repay_rate))
     df$default_rate <- as.numeric(as.character(df$default_rate))
-
+    # print(df$population)
     filtered_scatter = reactive({
       scatter = subset(df, adm_rate >= input$adm_rate[1] & adm_rate <= input$adm_rate[2])
         #df %>% filter(., adm_rate <= input$acc_adjust)
@@ -49,13 +49,15 @@ function(input, output) {
 
     output$earnings_plot <- renderPlotly({
       p2 <- ggplot(filtered_scatter(),
-                  aes(x = md_earnings_10 , y =avg_cost, text = college ) )+
-                  geom_point() +
+                  aes(x = avg_cost , y =md_earnings_10, text = college, color = school_type) )+
+                  geom_point(cex = 0.8) +
                   labs(
-                      x= "median earnings 10 years after graduation",
-                      y = "average yearly cost",
-                      title = "10 year earnings vs college cost, filtered by college selectivity")
-      ggplotly(p2)
+                      x= "average yearly cost",
+                      y = "median earnings 10 years after graduation",
+                      color = "School Type",
+                      title = "10 year earnings vs college cost, filtered by college selectivity") +
+                  theme(axis.text.y = element_text(angle = 90, hjust = 1))
+      p2
     })
     #
     # output$earnings_by_school <- renderPlot({
@@ -66,12 +68,28 @@ function(input, output) {
     #TODO: handle missing data
     # TODO: avoid rerendering ggmap layer every time call to reactive is made
     output$plot2 <- renderPlotly({
-        map_base <- get_map(location='united states', zoom=4, maptype = "terrain",
-             source='google',color='color')
-        plot_2 <- ggmap(map_base) +
-        geom_point(aes(x = long, y = lat, size = population, color = adm_rate), data = school_type())
-        # scale_color_distiller(palette = "RdPu")
-        ggplotly(plot_2)
+
+        g <- list(
+            scope = 'usa',
+            projection = list(type = 'albers usa'),
+            showland = TRUE,
+            landcolor = toRGB("gray95"),
+            subunitcolor = toRGB("gray85"),
+            countrycolor = toRGB("gray85"),
+            countrywidth = 0.5,
+            subunitwidth = 0.5
+        )
+        # map_base <- get_map(location='united states', zoom=4, maptype = "terrain",
+        #      source='google',color='color')
+        # plot_2 <- ggmap(map_base)
+        # geom_point(aes(x = long, y = lat, size = population, color = adm_rate), data = school_type())
+        # # scale_color_distiller(palette = "RdPu")
+        # ggplotly(plot_2)
+        p <- plot_geo(school_type(), lat = ~lat, lon = ~long, text = ~college,
+        size = ~population, color = ~adm_rate) %>%
+        layout(geo =g, title = "Colleges in the United States") %>%
+        ggplotly(p)
+
     })
 
     df$school_type <- factor(df$school_type)
@@ -86,28 +104,31 @@ function(input, output) {
       })
 
     output$eric_plot2 <- renderPlotly({
-      p4 <- ggplot(df, aes(x = avg_fam_inc, y = md_earnings_10, color = school_type)) +
+      p4 <- ggplot(df, aes(x = avg_fam_inc, y = md_earnings_10, text = college, color = school_type)) +
         geom_point(cex = 0.75) +
         labs(title = "Earnings vs. Average Family Income",
           x = "Average Family Income",
           y = "Earnings",
-          color = "School Type")
+          color = "School Type") +
+        theme(axis.text.y = element_text(angle = 90, hjust = 1))
       ggplotly(p4)
       })
 
     output$jai_plot1 <- renderPlotly({
-      p5 <- ggplot(df, aes(x=STEM, y=repay_rate, color=adm_rate)) +
-        geom_jitter() +
-        geom_smooth(method = "loess", se = TRUE) +
-        labs(x="Proportion of Students in STEM Majors",
-             y="Debt Repayment Rate",
-             title="Student Debt Repayment vs STEM Enrollment",
-             color="Admit Rate")
+        p5 <- ggplot(df, aes(x = pct_pell, y = repay_rate, text = college, color = school_type)) +
+        geom_point(cex =0.75) +
+        labs(
+            title = "debt repayment rate vs pell grant recieving rate",
+            x = "percent of students recieving pell grants",
+            y = "average debt repayment rate",
+            color = "School Type") +
+        theme(axis.text.y = element_text(angle = 90, hjust = 1))
+      # p5 <- ggplot(undergrad, aes(x = md_earnings_10, col = school_type)) + geom_density()
       ggplotly(p5)
       })
 
     output$jai_plot2 <- renderPlotly({
-      p6 <- ggplot(df, aes(x = md_debt, col = school_type)) +
+      p6 <- ggplot(df, aes(x = md_debt, color = school_type)) +
         geom_density() +
         labs(x="Median Debt (USD)", y="Density",
              color="School Type", title="Median Student Debt Distributions by School Type")
