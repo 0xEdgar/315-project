@@ -3,11 +3,15 @@
 library(shiny)
 library(ggplot2)
 library(shinydashboard)
+library(shinythemes)
 # library(dashboardthemes)
 library(tidyverse)
 library(plotly)
+shinythemes::themeSelector()
+
 # df = read.csv("undergrad.csv")
 fluidPage(
+    theme = shinytheme("simplex"),
 	titlePanel("Edgar's Plot #1"),
 	inputPanel(
 	       sliderInput("adm_rate", "Filter By Rate of Admissions", #add slider input for user to filter by admission rate
