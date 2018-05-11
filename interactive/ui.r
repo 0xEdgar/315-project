@@ -32,10 +32,6 @@ bod_1 <- fluidPage(
 	titlePanel("which colleges are most selective/expensive?"),
 	plotlyOutput('plot_8'),
     tags$br(),
-    p("
-    There seems to be 3 distinct clusters of tuition rates: one uniformly centered around 20k,
-    one centered around 40k a year that increases slightly with admission rate, and one centered around 60k."),
-    tags$br(),
     p("Overall, price vs selectivity of colleges tends to be fairly homogenous towards the center,
     but we notice that the most selective colleges are outliers that all tend to be around the same,
     extremely expensive price of approximately 60k a year.")
@@ -62,14 +58,11 @@ bod_2 <- fluidPage(
 
     plotlyOutput('earnings_plot', width = 'auto'),
     tags$br(),
-    p("For schools with acceptance rates above 50%, college cost is not a significant predictor of
-    post-graduate earnings.
-    However, for the most selective schools,
+    p("For the most selective schools,
     graduates of the most expensive schools tend to earn more.
     The highest earning graduates come from Harvard, MIT, and Stanford, but these three schools also
     rank among the most expensive, with a tuition of around 60k each.
     ")
-
 
     )
 
@@ -84,9 +77,6 @@ bod_3 <- fluidPage(
 	titlePanel("Do public school graduates end up with less debt?"),
 	plotlyOutput('jai_plot2'),
     tags$br(),
-    p("The median amount of debt from public school graduates is around 22k, whereas it's 26k for
-    public school grads and a whopping 34k for for-profit universities."),
-    tags$br(),
     p("One interesting thing to note is that the debt distribution of public and private school graduates
     is unimodal, but for for-profit schools, the distribution is bimodal."))
 
@@ -99,8 +89,7 @@ bod_4 <- fluidPage(
 
     tags$br(),
     p("Unsurprisingly, for-profit schools have the highest default rates.
-    Without adjusting for acceptance rates, public schools have higher default rates, but this trend reverses
-    itself when taking to account the most selective colleges (<25% acceptance rate)."),
+    Without adjusting for acceptance rates, public schools have higher default rates, but this trend reverses in the most selective colleges (<25% acceptance rate)."),
 
     titlePanel("Is your family's income related to how much you make?"),
 	plotlyOutput('eric_plot2', width = 'auto'),
