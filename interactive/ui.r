@@ -25,11 +25,10 @@ bod_1 <- fluidPage(
     plotlyOutput('plot2'),
     tags$br(),
     p("We notice some interesting things: The most selective colleges are
-    typically located in the East and West coasts. \nThe most selective public colleges (UC Berkeley and UCLA) are
-    also exclusively located in the West Coast, while the most selective private colleges are almost exclusively
-    located in the East Coast"),
+    typically located in the East and West coasts. \nThe most selective public colleges (UC Berkeley and UCLA) are located on the west cost,
+    while the most selective private colleges are located in the East Coast"),
     tags$br(),
-	titlePanel("which colleges are most selective/expensive?"),
+	titlePanel("Which colleges are most selective/expensive?"),
 	plotlyOutput('plot_8'),
     tags$br(),
     p("Overall, price vs selectivity of colleges tends to be fairly homogenous towards the center,
@@ -91,7 +90,7 @@ bod_4 <- fluidPage(
     p("Unsurprisingly, for-profit schools have the highest default rates.
     Without adjusting for acceptance rates, public schools have higher default rates, but this trend reverses in the most selective colleges (<25% acceptance rate)."),
 
-    titlePanel("Is your family's income related to your postgraduate earnings?"),
+    titlePanel("Is your family's income related to how much you make post-graduation?"),
 	plotlyOutput('eric_plot2', width = 'auto'),
     tags$br(),
     p("Your family's income is a better predictor of your postgraduate earnings than the type of school
@@ -102,7 +101,7 @@ ui <- dashboardPage(
   dashboardHeader(title = "Hurky White"),
   dashboardSidebar(
       sidebarMenu(
-          menuItem("Introduction", tabName = "iItroduction"),
+          menuItem("Introduction", tabName = "introduction"),
           menuItem("Which college should I choose?",tabName= "part1"),
           menuItem("How much will I earn?", tabName = "part2"),
           menuItem("Is college worth it?", tabName = "part3"),
