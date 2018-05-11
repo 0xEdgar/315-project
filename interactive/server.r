@@ -143,7 +143,7 @@ function(input, output) {
         add_markers(
             text = ~paste(college, "\npopulation: ",population, "\n acceptance rate: ", adm_rate)
             , hoverinfo = "text") %>%
-            layout(xaxis = x, yaxis = y, title = "Earnings vs Average Family Income")
+            layout(xaxis = x, yaxis = y, title = "Postgraduate Earnings vs Average Family Income")
       # p4 <- ggplot(df, aes(x = avg_fam_inc, y = md_earnings_10, text = college, color = school_type)) +
       #   geom_point(cex = 0.75) +
       #   labs(title = "Earnings vs. Average Family Income",
