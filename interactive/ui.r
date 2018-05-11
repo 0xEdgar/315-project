@@ -24,9 +24,8 @@ bod_1 <- fluidPage(
                        choices = c('All','Public', 'Private Non-Profit', 'Private For-Profit')),
     plotlyOutput('plot2'),
     tags$br(),
-    p("We notice some interesting things: The most selective colleges are
-    typically located in the East and West coasts. \nThe most selective public colleges (UC Berkeley and UCLA) are located on the west cost,
-    while the most selective private colleges are located in the East Coast"),
+    p("We notice some interesting things: The most selective colleges are typically located in the East and West coasts. \nThe most selective public colleges (UC Berkeley and UCLA) are located on the west cost,")
+
     tags$br(),
 	titlePanel("Which colleges are most selective/expensive?"),
 	plotlyOutput('plot_8'),
@@ -91,6 +90,7 @@ bod_4 <- fluidPage(
     Without adjusting for acceptance rates, public schools have higher default rates, but this trend reverses in the most selective colleges (<25% acceptance rate)."),
 
     titlePanel("Is your family's income related to how much you make post-graduation?"),
+
 	plotlyOutput('eric_plot2', width = 'auto'),
     tags$br(),
     p("Your family's income is a better predictor of your postgraduate earnings than the type of school
